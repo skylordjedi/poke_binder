@@ -11,10 +11,17 @@ export interface TcgApiCard {
 
 const BASE_URL = "https://api.pokemontcg.io/v2/cards";
 
-export async function searchCards(params: { name?: string; number?: string }): Promise<TcgApiCard[]> {
+export async function searchCards(params: {
+  name?: string;
+  number?: string;
+  printedTotal?: number;
+}): Promise<TcgApiCard[]> {
   const clauses: string[] = [];
   if (params.name) clauses.push(`name:${params.name}*`);
   if (params.number) clauses.push(`number:${params.number.split("/")[0]}`);
+  if (params.printedTotal !== undefined) {
+    clauses.push(`set.printedTotal:${params.printedTotal}`);
+  }
   if (clauses.length === 0) return [];
 
   const url = `${BASE_URL}?q=${encodeURIComponent(clauses.join(" "))}&pageSize=10`;
